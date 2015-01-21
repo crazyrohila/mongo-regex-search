@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<head>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <form>
+    <input type="text" placeholder="search" id="search-box">
+  </form>
+  <ul id="search-results"></ul>
+  <script>
+    var socket = io.connect();
+    search_box = document.getElementById('search-box');
+    var data = {};
+    var list = '';
+    search_box.onkeyup = function() {
+      data.query = this.value;
+      data.sid = socket.io.engine.id;
+      socket.emit('submit', data);
+      list = '';
+    };
+    socket.on('result', function(result) {
+      for (var i = 0; i < result.length; i++) {
+        list += '<li>'+result[i].title+'</li>';
+      };
+      document.getElementById('search-results').innerHTML = list;
+    })
+  </script>
+</body>
